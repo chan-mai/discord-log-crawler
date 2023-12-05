@@ -42,7 +42,6 @@ async def on_ready():
             await cogs.crawler.Crawler().all_channel(guild)
     else:
         guild = bot.get_guild(int(os.getenv("GUILD_IDS")))
-        channels = guild.fetch_channels()
         await cogs.crawler.Crawler().all_channel(guild)
             
 
