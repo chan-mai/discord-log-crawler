@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import os
+import cogs.crawler
 
 
 intents = discord.Intents.all()
@@ -33,11 +34,18 @@ async def on_application_command_error(ctx: discord.ApplicationContext, error):
 @bot.event
 async def on_ready():
     print(f"Bot名:{bot.user} On ready!!")
+    
+    # GUILD_IDSが複数あるか
+    if os.getenv("GUILD_IDS").find(",") != -1:
+        for guild_id in list(map(int, os.getenv("GUILD_IDS").split(","))):
+            guild = bot.get_guild(guild_id)
+            await cogs.crawler.Crawler().all_channel(guild)
+    else:
+        guild = bot.get_guild(int(os.getenv("GUILD_IDS")))
+        channels = guild.fetch_channels()
+        await cogs.crawler.Crawler().all_channel(guild)
+            
 
 
-bot.load_extensions(
-    'cogs.crawler',
-    store=False
-)
 
 bot.run(TOKEN)
